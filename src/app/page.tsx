@@ -13,6 +13,7 @@ interface HomeProps {
     platforms?: string;
     type?: string;
     sort?: string;
+    audience?: string;
   }>;
 }
 
@@ -21,18 +22,16 @@ export default async function Home({ searchParams }: HomeProps) {
   const platformSlugs = params.platforms?.split(",").filter(Boolean);
   const discountType = params.type as DiscountType | undefined;
   const sort = (params.sort as SortOption) || "best";
+  const audience = params.audience ?? "existing";
 
   const [promotions, platforms] = await Promise.all([
     getPromotions({ platformSlugs, discountType, sort }),
     getPlatforms(),
   ]);
 
-  const everyoneDeals = promotions.filter(
-    (p) => p.targetAudience !== "NEW_USERS" && !p.isNewUser
-  );
-  const newUserDeals = promotions.filter(
-    (p) => p.targetAudience === "NEW_USERS" || p.isNewUser
-  );
+  const filtered = audience === "new"
+    ? promotions.filter((p) => p.targetAudience === "NEW_USERS" || p.isNewUser)
+    : promotions.filter((p) => p.targetAudience !== "NEW_USERS" && !p.isNewUser);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -68,35 +67,9 @@ export default async function Home({ searchParams }: HomeProps) {
             <FilterBar />
           </Suspense>
 
-          {/* Existing user deals — primary section */}
-          <section>
-            <div className="mb-5">
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                Deals for Everyone
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Active promos for existing customers
-              </p>
-            </div>
-            <Suspense fallback={<DealGridSkeleton />}>
-              <DealGrid promotions={everyoneDeals} />
-            </Suspense>
-          </section>
-
-          {/* New user deals — secondary section */}
-          {newUserDeals.length > 0 && (
-            <section>
-              <div className="mb-5">
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                  New User Deals
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  First-time signup offers
-                </p>
-              </div>
-              <DealGrid promotions={newUserDeals} />
-            </section>
-          )}
+          <Suspense fallback={<DealGridSkeleton />}>
+            <DealGrid promotions={filtered} />
+          </Suspense>
         </div>
       </main>
 
