@@ -88,21 +88,16 @@ async function main() {
     { platformSlug: "caviar", title: "$15 off first fine dining order", promoCode: "CAVIAR15", discountType: DiscountType.FLAT_AMOUNT, discountValue: 15, minimumOrder: 40, isNewUser: true, targetAudience: TargetAudience.NEW_USERS, expirationDate: daysFromNow(21) },
   ];
 
+  // Clear all seed-sourced promotions to prevent duplicates
+  await prisma.promotion.deleteMany({ where: { source: "seed_data" } });
+  console.log("Cleared old seed promotions.");
+
   console.log("Seeding promotions...");
 
   for (const promo of promotions) {
     const platformId = createdPlatforms[promo.platformSlug];
-    await prisma.promotion.upsert({
-      where: {
-        platformId_promoCode_discountValue_discountType: {
-          platformId,
-          promoCode: promo.promoCode ?? "",
-          discountValue: promo.discountValue ?? 0,
-          discountType: promo.discountType,
-        },
-      },
-      update: {},
-      create: {
+    await prisma.promotion.create({
+      data: {
         platformId,
         title: promo.title,
         promoCode: promo.promoCode ?? null,
