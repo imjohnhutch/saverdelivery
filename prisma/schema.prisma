@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FLAT_AMOUNT
+  FREE_DELIVERY
+  BOGO
+  CASHBACK
+  FREE_ITEM
+  OTHER
+}
+
+enum TargetAudience {
+  ALL
+  NEW_USERS
+  EXISTING_USERS
+  SUBSCRIPTION_MEMBERS
+}
+
+enum ReportType {
+  WORKING
+  NOT_WORKING
+  EXPIRED
+}
+
+model Platform {
+  id         String      @id @default(uuid())
+  name       String
+  slug       String      @unique
+  logoUrl    String
+  websiteUrl String
+  color      String
+  promotions Promotion[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Promotion {
+  id              String         @id @default(uuid())
+  platformId      String
+  platform        Platform       @relation(fields: [platformId], references: [id])
+  title           String
+  description     String?
+  promoCode       String?
+  discountType    DiscountType
+  discountValue   Float?
+  minimumOrder    Float?
+  maxDiscount     Float?
+  startDate       DateTime?
+  expirationDate  DateTime?
+  isVerified      Boolean        @default(false)
+  isExpired       Boolean        @default(false)
+  isNewUser       Boolean        @default(false)
+  targetAudience  TargetAudience @default(ALL)
+  source          String
+  sourceUrl       String?
+  upvotes         Int            @default(0)
+  downvotes       Int            @default(0)
+  region          String?
+  clickLogs       ClickLog[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([platformId, promoCode, discountValue, discountType])
+  @@index([isExpired, expirationDate])
+  @@index([platformId])
+  @@index([discountType])
+}
+
+model ClickLog {
+  id           String     @id @default(uuid())
+  promotionId  String?
+  promotion    Promotion? @relation(fields: [promotionId], references: [id])
+  platformSlug String
+  referralUrl  String
+  userAgent    String?
+  ipHash       String?
+  createdAt    DateTime   @default(now())
+
+  @@index([platformSlug])
+  @@index([createdAt])
+}
