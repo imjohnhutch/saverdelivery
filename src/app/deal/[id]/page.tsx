@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DealGrid } from "@/components/deal-grid";
+import { PlatformLogo } from "@/components/platform-logo";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { DealActions } from "./deal-actions";
 import { getPromotion, getPromotions } from "@/lib/actions";
@@ -54,15 +54,13 @@ export default async function DealPage({ params }: DealPageProps) {
             className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-3.5" />
-            <div className="relative size-5 overflow-hidden rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04)]">
-              <Image
-                src={deal.platform.logoUrl}
-                alt={deal.platform.name}
-                fill
-                className="object-contain p-0.5"
-                unoptimized
-              />
-            </div>
+            <PlatformLogo
+              name={deal.platform.name}
+              logoUrl={deal.platform.logoUrl}
+              color={deal.platform.color}
+              size={20}
+              className="rounded-md"
+            />
             {deal.platform.name}
           </Link>
 

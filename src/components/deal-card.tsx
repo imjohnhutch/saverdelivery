@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Copy, ThumbsUp, ThumbsDown, ExternalLink, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { PlatformLogo } from "@/components/platform-logo";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { vote } from "@/lib/actions";
 import { useState } from "react";
@@ -104,15 +104,13 @@ export function DealCard({ promotion }: DealCardProps) {
       {/* Platform header */}
       <div className="flex items-center justify-between">
         <Link href={`/platform/${promotion.platform.slug}`} className="flex items-center gap-2.5">
-          <div className="relative size-7 overflow-hidden rounded-lg bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04)]">
-            <Image
-              src={promotion.platform.logoUrl}
-              alt={promotion.platform.name}
-              fill
-              className="object-contain p-1"
-              unoptimized
-            />
-          </div>
+          <PlatformLogo
+            name={promotion.platform.name}
+            logoUrl={promotion.platform.logoUrl}
+            color={promotion.platform.color}
+            size={28}
+            className="rounded-lg"
+          />
           <span className="text-xs font-medium text-muted-foreground">
             {promotion.platform.name}
           </span>
@@ -156,9 +154,6 @@ export function DealCard({ promotion }: DealCardProps) {
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
         {promotion.minimumOrder && (
           <span>Min. ${promotion.minimumOrder}</span>
-        )}
-        {promotion.targetAudience === "NEW_USERS" && (
-          <span className="text-primary font-medium">New users only</span>
         )}
         {promotion.expirationDate && (
           <CountdownTimer expirationDate={promotion.expirationDate} />

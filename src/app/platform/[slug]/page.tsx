@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DealGrid } from "@/components/deal-grid";
+import { PlatformLogo } from "@/components/platform-logo";
 import { getPlatform, getPlatforms, getPromotions } from "@/lib/actions";
 import { buildReferralLink } from "@/lib/utils/build-referral-link";
 import { Suspense } from "react";
@@ -46,6 +46,13 @@ export default async function PlatformPage({ params }: PlatformPageProps) {
 
   const referralUrl = buildReferralLink(slug);
 
+  const everyoneDeals = promotions.filter(
+    (p) => p.targetAudience !== "NEW_USERS" && !p.isNewUser
+  );
+  const newUserDeals = promotions.filter(
+    (p) => p.targetAudience === "NEW_USERS" || p.isNewUser
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Suspense>
@@ -56,15 +63,13 @@ export default async function PlatformPage({ params }: PlatformPageProps) {
         {/* Platform header */}
         <section className="px-6 pb-8 pt-12">
           <div className="mx-auto flex max-w-5xl items-center gap-5">
-            <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.04)]">
-              <Image
-                src={platform.logoUrl}
-                alt={platform.name}
-                fill
-                className="object-contain p-2.5"
-                unoptimized
-              />
-            </div>
+            <PlatformLogo
+              name={platform.name}
+              logoUrl={platform.logoUrl}
+              color={platform.color}
+              size={64}
+              className="shrink-0 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.04)]"
+            />
             <div className="flex-1">
               <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                 {platform.name}
@@ -85,8 +90,24 @@ export default async function PlatformPage({ params }: PlatformPageProps) {
           </div>
         </section>
 
-        <div className="mx-auto max-w-5xl px-6 pb-16">
-          <DealGrid promotions={promotions} />
+        <div className="mx-auto max-w-5xl space-y-10 px-6 pb-16">
+          {everyoneDeals.length > 0 && (
+            <section>
+              <h2 className="mb-5 text-lg font-semibold tracking-tight text-foreground">
+                Deals for Everyone
+              </h2>
+              <DealGrid promotions={everyoneDeals} />
+            </section>
+          )}
+
+          {newUserDeals.length > 0 && (
+            <section>
+              <h2 className="mb-5 text-lg font-semibold tracking-tight text-foreground">
+                New User Deals
+              </h2>
+              <DealGrid promotions={newUserDeals} />
+            </section>
+          )}
         </div>
       </main>
 

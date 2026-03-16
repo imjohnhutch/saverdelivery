@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
+import { PlatformLogo } from "@/components/platform-logo";
 
 interface Platform {
   id: string;
@@ -48,15 +48,13 @@ export function PlatformCarousel({ platforms }: { platforms: Platform[] }) {
                 : "hover:bg-secondary/60"
             }`}
           >
-            <div className="relative size-11 overflow-hidden rounded-xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-              <Image
-                src={p.logoUrl}
-                alt={p.name}
-                fill
-                className="object-contain p-1.5"
-                unoptimized
-              />
-            </div>
+            <PlatformLogo
+              name={p.name}
+              logoUrl={p.logoUrl}
+              color={p.color}
+              size={44}
+              className="rounded-xl"
+            />
             <span className={`text-xs font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
               {p.name}
             </span>
