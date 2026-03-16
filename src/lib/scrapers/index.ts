@@ -2,12 +2,7 @@ import { scrapeRetailMeNot } from "./sources/retailmenot";
 import { scrapeSlickdeals } from "./sources/slickdeals";
 import { scrapeReddit } from "./sources/reddit";
 import { scrapeSimplyCodes } from "./sources/simplycodes";
-import { scrapeDoorDash } from "./platforms/doordash";
-import { scrapeUberEats } from "./platforms/ubereats";
-import { scrapeGrubhub } from "./platforms/grubhub";
-import { scrapePostmates } from "./platforms/postmates";
-import { scrapeInstacart } from "./platforms/instacart";
-import { scrapeCaviar } from "./platforms/caviar";
+import { scrapeCouponSites } from "./sources/couponscom";
 
 export interface ScrapedDeal {
   platformSlug: string;
@@ -17,6 +12,7 @@ export interface ScrapedDeal {
   discountType: string;
   discountValue: number | null;
   minimumOrder: number | null;
+  maxDiscount?: number | null;
   expirationDate: Date | null;
   sourceUrl: string;
   source: string;
@@ -37,7 +33,8 @@ function deduplicateDeals(deals: ScrapedDeal[]): ScrapedDeal[] {
   const seen = new Map<string, ScrapedDeal>();
 
   for (const deal of deals) {
-    const key = `${deal.platformSlug}|${deal.promoCode ?? ""}|${deal.discountType}`;
+    // Dedupe by platform + promo code + discount type + discount value
+    const key = `${deal.platformSlug}|${deal.promoCode ?? ""}|${deal.discountType}|${deal.discountValue ?? ""}`;
 
     if (!seen.has(key)) {
       seen.set(key, deal);
@@ -50,50 +47,23 @@ function deduplicateDeals(deals: ScrapedDeal[]): ScrapedDeal[] {
 export async function runAllScrapers(): Promise<ScraperResult> {
   const sources: Record<string, { success: boolean; count: number; error?: string }> = {};
 
-  const sourceScrapers = [
+  // Focus on sources that actually return results via server-rendered HTML or JSON APIs
+  const scrapers = [
+    { name: "reddit", fn: scrapeReddit },
     { name: "retailmenot", fn: scrapeRetailMeNot },
     { name: "slickdeals", fn: scrapeSlickdeals },
-    { name: "reddit", fn: scrapeReddit },
     { name: "simplycodes", fn: scrapeSimplyCodes },
-  ];
-
-  const platformScrapers = [
-    { name: "doordash_direct", fn: scrapeDoorDash },
-    { name: "ubereats_direct", fn: scrapeUberEats },
-    { name: "grubhub_direct", fn: scrapeGrubhub },
-    { name: "postmates_direct", fn: scrapePostmates },
-    { name: "instacart_direct", fn: scrapeInstacart },
-    { name: "caviar_direct", fn: scrapeCaviar },
+    { name: "coupon_sites", fn: scrapeCouponSites },
   ];
 
   const allDeals: ScrapedDeal[] = [];
 
-  const sourceResults = await Promise.allSettled(
-    sourceScrapers.map((s) => s.fn())
-  );
+  // Run all scrapers in parallel
+  const results = await Promise.allSettled(scrapers.map((s) => s.fn()));
 
-  for (let i = 0; i < sourceScrapers.length; i++) {
-    const result = sourceResults[i];
-    const name = sourceScrapers[i].name;
-
-    if (result.status === "fulfilled") {
-      allDeals.push(...result.value);
-      sources[name] = { success: true, count: result.value.length };
-      console.log(`[scraper] ${name}: ${result.value.length} deals`);
-    } else {
-      const errorMsg = result.reason instanceof Error ? result.reason.message : String(result.reason);
-      sources[name] = { success: false, count: 0, error: errorMsg };
-      console.error(`[scraper] ${name} failed:`, errorMsg);
-    }
-  }
-
-  const platformResults = await Promise.allSettled(
-    platformScrapers.map((s) => s.fn())
-  );
-
-  for (let i = 0; i < platformScrapers.length; i++) {
-    const result = platformResults[i];
-    const name = platformScrapers[i].name;
+  for (let i = 0; i < scrapers.length; i++) {
+    const result = results[i];
+    const name = scrapers[i].name;
 
     if (result.status === "fulfilled") {
       allDeals.push(...result.value);

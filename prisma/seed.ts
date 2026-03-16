@@ -71,8 +71,9 @@ async function main() {
     { platformSlug: "grubhub", title: "$12 off first order", promoCode: "GRUB12NEW", discountType: DiscountType.FLAT_AMOUNT, discountValue: 12, minimumOrder: 20, isNewUser: true, targetAudience: TargetAudience.NEW_USERS, expirationDate: daysFromNow(14) },
 
     // Postmates - existing user deals
+    { platformSlug: "postmates", title: "35% off on $30+", discountType: DiscountType.PERCENTAGE, discountValue: 35, minimumOrder: 30, maxDiscount: 15, expirationDate: new Date("2026-03-20") },
+    { platformSlug: "postmates", title: "$15 off on $25+", discountType: DiscountType.FLAT_AMOUNT, discountValue: 15, minimumOrder: 25, expirationDate: new Date("2026-04-30") },
     { platformSlug: "postmates", title: "Free delivery all week", promoCode: "POSTFREE", discountType: DiscountType.FREE_DELIVERY, expirationDate: daysFromNow(7) },
-    { platformSlug: "postmates", title: "15% off late night orders", promoCode: "LATENIGHT15", discountType: DiscountType.PERCENTAGE, discountValue: 15, maxDiscount: 8, expirationDate: daysFromNow(12) },
     // Postmates - new user deals
     { platformSlug: "postmates", title: "$20 off first 2 orders", promoCode: "POST20NEW", discountType: DiscountType.FLAT_AMOUNT, discountValue: 20, isNewUser: true, targetAudience: TargetAudience.NEW_USERS, expirationDate: daysFromNow(21) },
 

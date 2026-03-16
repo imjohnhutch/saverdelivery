@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
               discountType: deal.discountType as DiscountType,
               discountValue: deal.discountValue,
               minimumOrder: deal.minimumOrder,
+              maxDiscount: deal.maxDiscount ?? null,
               expirationDate: deal.expirationDate,
               isVerified: false,
               isExpired: false,
