@@ -1,7 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
+import { headers } from "next/headers";
 import { DiscountType, TargetAudience } from "@prisma/client";
+
+const VALID_DISCOUNT_TYPES = Object.values(DiscountType);
+const VALID_SORT_OPTIONS = ["best", "newest", "expiring", "upvoted"];
 
 export type SortOption = "best" | "newest" | "expiring" | "upvoted";
 
@@ -82,17 +87,25 @@ export async function getPlatform(slug: string) {
 }
 
 export async function vote(promotionId: string, direction: "up" | "down") {
-  if (direction === "up") {
-    return prisma.promotion.update({
-      where: { id: promotionId },
-      data: { upvotes: { increment: 1 } },
-    });
-  } else {
-    return prisma.promotion.update({
-      where: { id: promotionId },
-      data: { downvotes: { increment: 1 } },
-    });
+  if (!promotionId || typeof promotionId !== "string") {
+    throw new Error("Invalid promotion ID");
   }
+  if (direction !== "up" && direction !== "down") {
+    throw new Error("Invalid vote direction");
+  }
+
+  const hdrs = await headers();
+  const forwarded = hdrs.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim() ?? hdrs.get("x-real-ip") ?? "unknown";
+  const { ok } = rateLimit(`vote:${ip}:${promotionId}`, { max: 1, windowMs: 3600_000 });
+  if (!ok) {
+    throw new Error("Already voted on this deal");
+  }
+
+  return prisma.promotion.update({
+    where: { id: promotionId },
+    data: direction === "up" ? { upvotes: { increment: 1 } } : { downvotes: { increment: 1 } },
+  });
 }
 
 export async function getActiveDealsCount() {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { runAllScrapers } from "@/lib/scrapers";
 import type { DiscountType, TargetAudience } from "@prisma/client";
+import crypto from "crypto";
 
 export async function GET() {
   return NextResponse.json({ error: "Use POST" }, { status: 405 });
@@ -9,9 +10,16 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
-  const expected = `Bearer ${process.env.CRON_SECRET}`;
+  const secret = process.env.CRON_SECRET;
 
-  if (!process.env.CRON_SECRET || authHeader !== expected) {
+  if (!secret || !authHeader) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const expected = `Bearer ${secret}`;
+  const a = Buffer.from(authHeader);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -127,7 +135,7 @@ export async function POST(request: NextRequest) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error("Cron aggregate failed:", msg);
     return NextResponse.json(
-      { error: "Aggregation failed", detail: msg },
+      { error: "Aggregation failed" },
       { status: 500 }
     );
   }

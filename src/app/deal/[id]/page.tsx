@@ -20,9 +20,16 @@ export async function generateMetadata({ params }: DealPageProps): Promise<Metad
   const deal = await getPromotion(id);
   if (!deal) return {};
 
+  const description = deal.description ?? `${deal.title} - Get this deal on ${deal.platform.name} with saver.delivery.`;
   return {
-    title: `${deal.title} | saver.delivery`,
-    description: deal.description ?? `${deal.title} - Get this deal on ${deal.platform.name} with saver.delivery.`,
+    title: deal.title,
+    description,
+    alternates: { canonical: `https://saver.delivery/deal/${id}` },
+    openGraph: {
+      title: `${deal.title} | saver.delivery`,
+      description,
+      url: `https://saver.delivery/deal/${id}`,
+    },
   };
 }
 
@@ -63,6 +70,34 @@ export default async function DealPage({ params }: DealPageProps) {
             />
             {deal.platform.name}
           </Link>
+
+          {/* JSON-LD structured data */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Offer",
+                name: deal.title,
+                description: deal.description ?? deal.title,
+                url: `https://saver.delivery/deal/${deal.id}`,
+                priceCurrency: "USD",
+                ...(deal.discountValue && {
+                  discount: deal.discountType === "PERCENTAGE"
+                    ? `${deal.discountValue}%`
+                    : `$${deal.discountValue}`,
+                }),
+                ...(deal.expirationDate && {
+                  validThrough: new Date(deal.expirationDate).toISOString(),
+                }),
+                seller: {
+                  "@type": "Organization",
+                  name: deal.platform.name,
+                  url: deal.platform.websiteUrl,
+                },
+              }),
+            }}
+          />
 
           {/* Deal card */}
           <div className="overflow-hidden rounded-2xl bg-card shadow-[0_1px_3px_rgba(0,0,0,0.06),0_8px_28px_rgba(0,0,0,0.06)]">

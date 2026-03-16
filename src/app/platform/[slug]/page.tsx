@@ -29,9 +29,16 @@ export async function generateMetadata({ params }: PlatformPageProps): Promise<M
 
   const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
 
+  const description = `Find the latest ${platform.name} promo codes, coupons, and deals. Save on your next ${platform.name} order with saver.delivery.`;
   return {
-    title: `Best ${platform.name} Promo Codes - ${month} | saver.delivery`,
-    description: `Find the latest ${platform.name} promo codes, coupons, and deals. Save on your next ${platform.name} order with saver.delivery.`,
+    title: `Best ${platform.name} Promo Codes - ${month}`,
+    description,
+    alternates: { canonical: `https://saver.delivery/platform/${slug}` },
+    openGraph: {
+      title: `Best ${platform.name} Promo Codes - ${month} | saver.delivery`,
+      description,
+      url: `https://saver.delivery/platform/${slug}`,
+    },
   };
 }
 

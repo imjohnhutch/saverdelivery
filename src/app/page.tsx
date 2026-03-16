@@ -39,6 +39,21 @@ export default async function Home({ searchParams }: HomeProps) {
         <Navbar />
       </Suspense>
 
+      {/* JSON-LD structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "saver.delivery",
+            url: "https://saver.delivery",
+            description:
+              "Compare promo codes from DoorDash, Uber Eats, Grubhub & more. Updated daily.",
+          }),
+        }}
+      />
+
       <main className="flex-1">
         {/* Hero */}
         <section className="px-6 pb-8 pt-16 text-center sm:pt-20 sm:pb-12">
