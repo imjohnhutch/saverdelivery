@@ -6,7 +6,7 @@ import { PlatformCarousel } from "@/components/platform-carousel";
 import { FilterBar } from "@/components/filter-bar";
 import { DealGrid, DealGridSkeleton } from "@/components/deal-grid";
 import { getPromotions, getPlatforms, type SortOption } from "@/lib/actions";
-import { DiscountType, TargetAudience } from "@/generated/prisma/enums";
+import { DiscountType, TargetAudience } from "@prisma/client";
 
 interface HomeProps {
   searchParams: Promise<{

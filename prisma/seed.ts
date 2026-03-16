@@ -1,5 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client";
-import { DiscountType, TargetAudience } from "../src/generated/prisma/enums";
+import { PrismaClient, DiscountType, TargetAudience } from "@prisma/client";
 
 const prisma = new PrismaClient();
 

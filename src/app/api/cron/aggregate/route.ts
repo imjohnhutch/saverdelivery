@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { runAllScrapers } from "@/lib/scrapers";
-import type { DiscountType, TargetAudience } from "@/generated/prisma/enums";
+import type { DiscountType, TargetAudience } from "@prisma/client";
 
 export async function GET() {
   return NextResponse.json({ error: "Use POST" }, { status: 405 });

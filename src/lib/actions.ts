@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { DiscountType, TargetAudience } from "@/generated/prisma/enums";
+import { DiscountType, TargetAudience } from "@prisma/client";
 
 export type SortOption = "best" | "newest" | "expiring" | "upvoted";
 
