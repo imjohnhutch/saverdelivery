@@ -13,7 +13,6 @@ interface HomeProps {
     platforms?: string;
     type?: string;
     sort?: string;
-    q?: string;
   }>;
 }
 
@@ -22,10 +21,9 @@ export default async function Home({ searchParams }: HomeProps) {
   const platformSlugs = params.platforms?.split(",").filter(Boolean);
   const discountType = params.type as DiscountType | undefined;
   const sort = (params.sort as SortOption) || "best";
-  const search = params.q;
 
   const [promotions, platforms] = await Promise.all([
-    getPromotions({ platformSlugs, discountType, sort, search }),
+    getPromotions({ platformSlugs, discountType, sort }),
     getPlatforms(),
   ]);
 
