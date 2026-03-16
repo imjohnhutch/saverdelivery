@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 const discountTypes = [
   { label: "All", value: "" },
@@ -9,12 +8,6 @@ const discountTypes = [
   { label: "% Off", value: "PERCENTAGE" },
   { label: "$ Off", value: "FLAT_AMOUNT" },
   { label: "BOGO", value: "BOGO" },
-];
-
-const audiences = [
-  { label: "All", value: "" },
-  { label: "New Users", value: "NEW_USERS" },
-  { label: "Everyone", value: "ALL" },
 ];
 
 const sortOptions = [
@@ -29,7 +22,6 @@ export function FilterBar() {
   const searchParams = useSearchParams();
 
   const currentType = searchParams.get("type") ?? "";
-  const currentAudience = searchParams.get("audience") ?? "";
   const currentSort = searchParams.get("sort") ?? "best";
 
   const setParam = (key: string, value: string) => {
@@ -43,41 +35,27 @@ export function FilterBar() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex flex-wrap gap-1.5">
         {discountTypes.map((dt) => (
-          <Button
+          <button
             key={dt.value}
-            variant={currentType === dt.value ? "default" : "outline"}
-            size="sm"
             onClick={() => setParam("type", dt.value)}
+            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
+              currentType === dt.value
+                ? "bg-foreground text-background shadow-sm"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            }`}
           >
             {dt.label}
-          </Button>
+          </button>
         ))}
       </div>
-
-      <div className="h-6 w-px bg-border" />
-
-      <div className="flex flex-wrap gap-1.5">
-        {audiences.map((a) => (
-          <Button
-            key={a.value}
-            variant={currentAudience === a.value ? "default" : "outline"}
-            size="sm"
-            onClick={() => setParam("audience", a.value)}
-          >
-            {a.label}
-          </Button>
-        ))}
-      </div>
-
-      <div className="h-6 w-px bg-border" />
 
       <select
         value={currentSort}
         onChange={(e) => setParam("sort", e.target.value)}
-        className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground"
+        className="rounded-full border-0 bg-secondary px-3.5 py-1.5 text-sm font-medium text-foreground outline-none transition-colors hover:bg-secondary/80"
       >
         {sortOptions.map((s) => (
           <option key={s.value} value={s.value}>

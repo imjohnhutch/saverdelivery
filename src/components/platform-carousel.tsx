@@ -32,30 +32,34 @@ export function PlatformCarousel({ platforms }: { platforms: Platform[] }) {
     router.push(`/?${params.toString()}`);
   };
 
+  if (platforms.length === 0) return null;
+
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+    <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
       {platforms.map((p) => {
         const isSelected = selected.includes(p.slug);
         return (
           <button
             key={p.slug}
             onClick={() => toggle(p.slug)}
-            className="flex shrink-0 flex-col items-center gap-2 rounded-xl border-2 bg-card p-3 transition-all hover:shadow-md"
-            style={{
-              borderColor: isSelected ? p.color : "transparent",
-              boxShadow: isSelected ? `0 0 0 1px ${p.color}20` : undefined,
-            }}
+            className={`flex shrink-0 flex-col items-center gap-2 rounded-2xl px-4 py-3 transition-all duration-200 ${
+              isSelected
+                ? "bg-card shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-primary/30"
+                : "hover:bg-secondary/60"
+            }`}
           >
-            <div className="relative size-12 overflow-hidden rounded-lg bg-white p-1">
+            <div className="relative size-11 overflow-hidden rounded-xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
               <Image
                 src={p.logoUrl}
                 alt={p.name}
                 fill
-                className="object-contain p-1"
+                className="object-contain p-1.5"
                 unoptimized
               />
             </div>
-            <span className="text-xs font-medium text-foreground">{p.name}</span>
+            <span className={`text-xs font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+              {p.name}
+            </span>
           </button>
         );
       })}

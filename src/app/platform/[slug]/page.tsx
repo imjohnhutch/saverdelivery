@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DealGrid } from "@/components/deal-grid";
-import { Button } from "@/components/ui/button";
 import { getPlatform, getPlatforms, getPromotions } from "@/lib/actions";
 import { buildReferralLink } from "@/lib/utils/build-referral-link";
 import { Suspense } from "react";
@@ -49,51 +47,45 @@ export default async function PlatformPage({ params }: PlatformPageProps) {
   const referralUrl = buildReferralLink(slug);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Suspense>
         <Navbar />
       </Suspense>
 
       <main className="flex-1">
         {/* Platform header */}
-        <section
-          className="border-b px-4 py-10"
-          style={{ borderBottomColor: platform.color + "40" }}
-        >
-          <div className="mx-auto flex max-w-6xl items-center gap-6">
-            <div
-              className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-white p-2 shadow-md"
-              style={{ boxShadow: `0 4px 20px ${platform.color}20` }}
-            >
+        <section className="px-6 pb-8 pt-12">
+          <div className="mx-auto flex max-w-5xl items-center gap-5">
+            <div className="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.04)]">
               <Image
                 src={platform.logoUrl}
                 alt={platform.name}
                 fill
-                className="object-contain p-2"
+                className="object-contain p-2.5"
                 unoptimized
               />
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-                {platform.name} Deals
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                {platform.name}
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {promotions.length} active promo code{promotions.length !== 1 ? "s" : ""}
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {promotions.length} active deal{promotions.length !== 1 ? "s" : ""}
               </p>
             </div>
             <a
               href={referralUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
             >
-              <ExternalLink className="size-4" />
-              Visit {platform.name}
+              Visit Site
+              <ExternalLink className="size-3.5" />
             </a>
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-4 py-8">
+        <div className="mx-auto max-w-5xl px-6 pb-16">
           <DealGrid promotions={promotions} />
         </div>
       </main>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { DealGrid } from "@/components/deal-grid";
@@ -40,19 +41,20 @@ export default async function DealPage({ params }: DealPageProps) {
     .slice(0, 6);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Suspense>
         <Navbar />
       </Suspense>
 
       <main className="flex-1">
-        <div className="mx-auto max-w-3xl px-4 py-8">
-          {/* Platform info */}
+        <div className="mx-auto max-w-2xl px-6 py-10">
+          {/* Back link */}
           <Link
             href={`/platform/${deal.platform.slug}`}
-            className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-brand"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <div className="relative size-6 overflow-hidden rounded bg-white">
+            <ArrowLeft className="size-3.5" />
+            <div className="relative size-5 overflow-hidden rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04)]">
               <Image
                 src={deal.platform.logoUrl}
                 alt={deal.platform.name}
@@ -65,14 +67,12 @@ export default async function DealPage({ params }: DealPageProps) {
           </Link>
 
           {/* Deal card */}
-          <div
-            className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-          >
-            <div className="h-1.5" style={{ backgroundColor: deal.platform.color }} />
-
-            <div className="space-y-6 p-6">
+          <div className="overflow-hidden rounded-2xl bg-card shadow-[0_1px_3px_rgba(0,0,0,0.06),0_8px_28px_rgba(0,0,0,0.06)]">
+            <div className="space-y-6 p-7">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">{deal.title}</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                  {deal.title}
+                </h1>
                 {deal.description && (
                   <p className="mt-2 text-muted-foreground">{deal.description}</p>
                 )}
@@ -80,8 +80,8 @@ export default async function DealPage({ params }: DealPageProps) {
 
               {/* Promo code area */}
               {deal.promoCode && (
-                <div className="rounded-xl border-2 border-dashed border-brand/30 bg-brand/5 p-6 text-center">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="rounded-xl bg-secondary/80 p-6 text-center">
+                  <p className="mb-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground">
                     Promo Code
                   </p>
                   <code className="text-2xl font-bold tracking-wider text-foreground">
@@ -93,9 +93,9 @@ export default async function DealPage({ params }: DealPageProps) {
               {/* Details grid */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 {deal.discountValue && (
-                  <div>
-                    <span className="text-muted-foreground">Discount</span>
-                    <p className="font-medium text-foreground">
+                  <div className="rounded-xl bg-secondary/50 px-4 py-3">
+                    <span className="text-xs text-muted-foreground">Discount</span>
+                    <p className="mt-0.5 font-semibold text-foreground">
                       {deal.discountType === "PERCENTAGE"
                         ? `${deal.discountValue}% off`
                         : deal.discountType === "FLAT_AMOUNT"
@@ -105,20 +105,20 @@ export default async function DealPage({ params }: DealPageProps) {
                   </div>
                 )}
                 {deal.minimumOrder && (
-                  <div>
-                    <span className="text-muted-foreground">Minimum Order</span>
-                    <p className="font-medium text-foreground">${deal.minimumOrder}</p>
+                  <div className="rounded-xl bg-secondary/50 px-4 py-3">
+                    <span className="text-xs text-muted-foreground">Minimum Order</span>
+                    <p className="mt-0.5 font-semibold text-foreground">${deal.minimumOrder}</p>
                   </div>
                 )}
                 {deal.maxDiscount && (
-                  <div>
-                    <span className="text-muted-foreground">Max Discount</span>
-                    <p className="font-medium text-foreground">${deal.maxDiscount}</p>
+                  <div className="rounded-xl bg-secondary/50 px-4 py-3">
+                    <span className="text-xs text-muted-foreground">Max Discount</span>
+                    <p className="mt-0.5 font-semibold text-foreground">${deal.maxDiscount}</p>
                   </div>
                 )}
                 {deal.expirationDate && (
-                  <div>
-                    <span className="text-muted-foreground">Expires</span>
+                  <div className="rounded-xl bg-secondary/50 px-4 py-3">
+                    <span className="text-xs text-muted-foreground">Expires</span>
                     <div className="mt-0.5">
                       <CountdownTimer expirationDate={deal.expirationDate} />
                     </div>
@@ -137,8 +137,10 @@ export default async function DealPage({ params }: DealPageProps) {
 
           {/* Similar deals */}
           {filteredSimilar.length > 0 && (
-            <div className="mt-12">
-              <h2 className="mb-6 text-xl font-bold text-foreground">Similar Deals</h2>
+            <div className="mt-16">
+              <h2 className="mb-6 text-xl font-semibold tracking-tight text-foreground">
+                Similar Deals
+              </h2>
               <DealGrid promotions={filteredSimilar} />
             </div>
           )}

@@ -32,26 +32,27 @@ export default async function Home({ searchParams }: HomeProps) {
   ]);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Suspense>
         <Navbar />
       </Suspense>
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="border-b border-border bg-gradient-to-b from-brand/5 to-transparent px-4 py-12 text-center">
+        <section className="px-6 pb-8 pt-16 text-center sm:pt-20 sm:pb-12">
           <div className="mx-auto max-w-2xl">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Every food delivery deal. One place.
+            <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+              Every delivery deal.
+              <br />
+              <span className="text-primary">One place.</span>
             </h1>
-            <p className="mt-3 text-base text-muted-foreground sm:text-lg">
-              Compare promo codes from DoorDash, Uber Eats, Grubhub, Postmates,
-              Instacart and Caviar.
+            <p className="mx-auto mt-4 max-w-lg text-lg text-muted-foreground">
+              Compare promo codes from DoorDash, Uber Eats, Grubhub &amp; more. Updated daily.
             </p>
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+        <div className="mx-auto max-w-5xl space-y-8 px-6 pb-16">
           <Suspense>
             <StatsBar />
           </Suspense>

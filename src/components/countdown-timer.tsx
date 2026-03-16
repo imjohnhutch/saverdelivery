@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Clock } from "lucide-react";
 
 export function CountdownTimer({ expirationDate }: { expirationDate: string | Date }) {
   const [text, setText] = useState("");
@@ -22,16 +23,16 @@ export function CountdownTimer({ expirationDate }: { expirationDate: string | Da
       const days = Math.floor(hours / 24);
 
       if (days > 1) {
-        setText(`Expires in ${days} days`);
+        setText(`${days}d left`);
         setIsUrgent(false);
       } else if (days === 1) {
-        setText("Expires tomorrow");
+        setText("1d left");
         setIsUrgent(false);
       } else if (hours > 1) {
-        setText(`Expires in ${hours} hours`);
+        setText(`${hours}h left`);
         setIsUrgent(true);
       } else {
-        setText("Expires today!");
+        setText("Expiring!");
         setIsUrgent(true);
       }
     };
@@ -44,7 +45,8 @@ export function CountdownTimer({ expirationDate }: { expirationDate: string | Da
   if (!text) return null;
 
   return (
-    <span className={`text-xs font-medium ${isUrgent ? "text-red-500" : "text-muted-foreground"}`}>
+    <span className={`inline-flex items-center gap-1 text-xs font-medium ${isUrgent ? "text-destructive" : "text-muted-foreground"}`}>
+      <Clock className="size-3" />
       {text}
     </span>
   );

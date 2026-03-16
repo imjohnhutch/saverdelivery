@@ -2,7 +2,6 @@
 
 import { Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 interface DealActionsProps {
   promotionId: string;
@@ -51,15 +50,21 @@ export function DealActions({
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       {promoCode && (
-        <Button variant="outline" size="lg" className="flex-1" onClick={handleCopy}>
+        <button
+          onClick={handleCopy}
+          className="flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition-all hover:bg-secondary active:scale-[0.98]"
+        >
           <Copy className="size-4" />
           Copy Code
-        </Button>
+        </button>
       )}
-      <Button size="lg" className="flex-1" onClick={handleUseDeal}>
+      <button
+        onClick={handleUseDeal}
+        className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+      >
         <ExternalLink className="size-4" />
         Use Deal on {platformName}
-      </Button>
+      </button>
     </div>
   );
 }
