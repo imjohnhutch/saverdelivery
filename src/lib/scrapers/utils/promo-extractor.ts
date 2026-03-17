@@ -14,6 +14,33 @@ const FALSE_POSITIVES = new Set([
   "CLONE", "MERGE", "HEAD", "BODY", "TITLE", "DESC", "TEXT", "DATA",
   "TYPE", "NAME", "CODE", "FREE", "DEAL", "SALE", "BEST", "GOOD",
   "WORKS", "WORKED", "WORKING", "MARCH", "APRIL", "TODAY",
+  // Common words that get false-matched from Reddit posts
+  "SUPPORT", "WONT", "DONT", "CANT", "ISNT", "DOESNT", "DIDNT",
+  "CODES", "SHOW", "TION", "MENT", "DOES", "MAKE", "KNOW", "WANT",
+  "NEED", "HELP", "SAID", "SCAM", "WEEK", "USED", "GETS", "GIVE",
+  "GAVE", "WERE", "COME", "MADE", "TAKE", "TOOK", "KEEP", "KEPT",
+  "SENT", "TOLD", "FIND", "BACK", "DOWN", "YEAH", "SURE", "OKAY",
+  "WISH", "HOPE", "WAIT", "STOP", "CALL", "SAYS", "WENT", "SEEN",
+  "LOOK", "SEEM", "OWED", "MINE", "PAID", "ABLE", "WASN", "DIDN",
+  "AREN", "HAVEN", "HASN", "HADN", "BEING", "DOING", "GOING", "THING",
+  "CAUSE", "SINCE", "UNTIL", "WHILE", "FIRST", "ORDER", "ORDERS",
+  "PROMO", "PROMOS", "OFFER", "OFFERS", "USING", "TRIED", "ALLOW",
+  "CHECK", "GETTING", "EXISTING", "ANYONE", "ACCOUNT", "SAVINGS",
+  "DOORDASH", "UBEREATS", "GRUBHUB", "POSTMATES", "INSTACART",
+  "USERS", "CUSTOMER", "APPLY", "APPLIED", "ENTERED", "SHOWING",
+  "DELIVERY", "DASHER", "DRIVER", "DISCOUNT", "PERCENT", "DOLLAR",
+  "DROPPED", "EARNED", "TIMES", "BONUS", "TECH", "STORE", "ITEMS",
+  "ISSUE", "TOTAL", "NEVER", "ASKED", "TRIED", "PLACE", "POINT",
+  "WORTH", "PRICE", "SPEND", "CHARGE", "AMOUNT", "REWARD", "OFFERS",
+  "EXTRA", "ADDED", "BASED", "GIVEN", "LISTED", "REASON", "PEOPLE",
+  "PICKED", "START", "STILL", "TRIED", "CHANGE", "PROBLEM",
+  "TEXAS", "DALLAS", "CHICAGO", "MARKET", "TOWN", "AREA",
+  "PLATINUM", "DASHER", "DRIVER", "WALMART", "TARGET",
+  "ANYWHERE", "WORK", "WORKS", "WRONG", "STUFF", "WHOLE", "ABOVE",
+  "CLOSE", "FRONT", "HOUSE", "LEVEL", "MONTH", "NIGHT", "SMALL",
+  "THREE", "UNTIL", "WORLD", "YOUNG", "ALONG", "BELOW", "BRING",
+  "CARRY", "CLEAN", "COVER", "EARLY", "LIGHT", "LEAVE", "HEARD",
+  "LARGE", "LATER", "LUNCH", "MIGHT", "REFUND", "SHELF", "RANT",
 ]);
 
 const CODE_PATTERNS = [
@@ -43,7 +70,7 @@ export function extractPromoCodes(text: string): string[] {
     const code = match[1];
     if (
       !FALSE_POSITIVES.has(code) &&
-      /\d/.test(code) &&
+      (code.match(/\d/g) || []).length >= 2 &&
       /[A-Z]/.test(code) &&
       code.length >= 4 &&
       code.length <= 20

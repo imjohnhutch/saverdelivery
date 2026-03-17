@@ -114,6 +114,12 @@ function isPromoRelated(text: string): boolean {
   return /promo|coupon|discount|code|deal|offer|\boff\b|free delivery|\$\d+|%\s*off/i.test(text);
 }
 
+// Skip posts that are clearly complaints, questions, or rants rather than deal shares
+function isComplaint(text: string): boolean {
+  const lower = text.toLowerCase();
+  return /scam|refused|refusing|won't work|wont work|doesn't work|didn't work|screwing me|ripped off|stole|stolen|lawsuit|sue |class action|horrible|terrible|worst|never again|stay away|warning|beware|ineligible|not eligible|can't use|cant use|won't apply|wont apply|not working|broken|lost\s*(my|a|the)\s*(promo|reward|code)|anyone\s*else\s*lose|how does.*(promo|code|deal|offer)\s*work|does\s*(doordash|uber|grubhub)\s*charge|rant\s*about|no cashback|what('s|\s*is)\s*(your|the)\s*experience/i.test(lower);
+}
+
 export async function scrapeReddit(): Promise<ScrapedDeal[]> {
   const deals: ScrapedDeal[] = [];
   const seen = new Set<string>();
@@ -177,8 +183,9 @@ function processPost(
     if (seen.has(permalink)) return;
     seen.add(permalink);
 
-    // Must be promo-related
+    // Must be promo-related, not a complaint
     if (!isPromoRelated(combinedText)) return;
+    if (isComplaint(combinedText)) return;
 
     const platform = detectPlatform(combinedText, subreddit);
     if (!platform) return;
