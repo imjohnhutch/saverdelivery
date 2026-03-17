@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     description:
       "Compare promo codes from DoorDash, Uber Eats, Grubhub & more. Updated daily.",
   },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   robots: { index: true, follow: true },
   alternates: { canonical: "https://saver.delivery" },
 };
